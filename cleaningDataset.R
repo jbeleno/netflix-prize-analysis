@@ -42,7 +42,8 @@ while (length(oneLine <- readLines(con, n = 1, warn = FALSE)) > 0) {
         
             # Join all the data using semicolon
             movie_data <- paste0(movie_data_without_title, 
-                                 movie_title, ";", 
+                                 movie_title, ";",
+                                 movieDataWeb$Director, ";",
                                  movieDataWeb$Genre, ";",
                                  movieDataWeb$Language, ";",
                                  movieDataWeb$Country)
@@ -70,6 +71,7 @@ while (length(oneLine <- readLines(con, n = 1, warn = FALSE)) > 0) {
             # Join all the data using semicolon
             movie_data <- paste0(movie_data_without_title, 
                                  movie_title, ";", 
+                                 "NULL;",
                                  "NULL;",
                                  "NULL;",
                                  "NULL")
