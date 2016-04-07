@@ -27,15 +27,16 @@ movies <- read.csv2(fileNameCleaned,
 movies$year <- as.integer(movies$year)
 
 # Histogram of movies per year
-qplot(movies$year, 
-      geom="histogram", 
-      binwidth = 1,  
-      main = "Histogram of movies per year", 
-      xlab = "Year",  
-      fill=I("blue"), 
-      col=I("red"), 
-      alpha=I(.2),
-      xlim=c(1890,2009))
+h <- qplot(movies$year, 
+          geom="histogram", 
+          binwidth = 1,  
+          main = "Histogram of movies per year", 
+          xlab = "Year",  
+          fill=I("blue"), 
+          col=I("red"), 
+          alpha=I(.2),
+          xlim=c(1890,2009))
+h
 
 # Movies that match with Action genre
 actionMovies <- subset(movies, grepl(genres[1], genre))
@@ -44,8 +45,42 @@ actionMovies <- subset(movies, grepl(genres[1], genre))
 # the frecuency of each genre in the movies available in Netflix
 NumMoviesPerGenre <- sapply(genres,function(x)sum(grepl(x, movies$genre)))
 
-# Numbre of movies directed by each person
+# Barplot of genre and # of movies
+moviesVector <- NumMoviesPerGenre
+genresVector <- names(NumMoviesPerGenre)
+df <- data.frame(genres = genresVector, movies = moviesVector)
+
+g <- ggplot(data = df, aes(x = genres, y = movies))
+g <- g + geom_bar(fill="deepskyblue3", stat = "identity")
+g <- g + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+g <- g + ggtitle("# of movies per genre")
+g <- g + labs(x="Genres",y="# of Movies")
+g <- g + geom_text(
+    aes(x = genres, y = movies + 100, label = movies), 
+    size = 3, hjust=0.5)
+g
+
+
+# Number of movies directed by each person
 NumMoviesPerDirector <- sort(table(movies$director), decreasing=TRUE)
+NumMoviesPerDirector <- NumMoviesPerDirector[names(NumMoviesPerDirector) != "NULL"]
+
+# Plot of the n directors with most movies
+n <- 10
+
+nMoviesVector <- head(NumMoviesPerDirector, n)
+directorsVector <- names(head(NumMoviesPerDirector, n))
+df <- data.frame(directors = directorsVector, movies = nMoviesVector)
+
+g <- ggplot(data = df, aes(x = directors, y = movies))
+g <- g + geom_bar(fill="deepskyblue3", stat = "identity")
+g <- g + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+g <- g + ggtitle("Directors with most movies in the dataset")
+g <- g + labs(x="Directors",y="# of Movies")
+g <- g + geom_text(
+            aes(x = directors, y = movies + 1, label = movies), 
+            size = 3, hjust=0.5)
+g
 
 # Reading movie data with actors
 moviesCompleteByActor <- read.csv2(fileNameActors, 
@@ -67,3 +102,20 @@ str(moviesCompleteByActor)
 
 # Number of movies per actor
 NumMoviesPerActor <- sort(table(moviesCompleteByActor$actor), decreasing=TRUE)
+
+# Plot of the n actors with most movies
+n <- 10
+
+nMoviesVector <- head(NumMoviesPerActor, n)
+actorsVector <- names(head(NumMoviesPerActor, n))
+df <- data.frame(actors = actorsVector, movies = nMoviesVector)
+
+g <- ggplot(data = df, aes(x = actors, y = movies))
+g <- g + geom_bar(fill="deepskyblue3", stat = "identity")
+g <- g + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+g <- g + ggtitle("Actors with most movies in the dataset")
+g <- g + labs(x="Actors",y="# of Movies")
+g <- g + geom_text(
+    aes(x = actors, y = movies + 1, label = movies), 
+    size = 3, hjust=0.5)
+g

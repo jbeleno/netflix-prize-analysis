@@ -71,10 +71,10 @@ while (length(oneLine <- readLines(con, n = 1, warn = FALSE)) > 0) {
             # Join all the data using semicolon
             movie_data <- paste0(movie_data_without_title, 
                                  movie_title, ";", 
-                                 "NULL;",
-                                 "NULL;",
-                                 "NULL;",
-                                 "NULL")
+                                 "N/A;",
+                                 "N/A;",
+                                 "N/A;",
+                                 "N/A")
             
             # Writting the final data in a file
             write(movie_data, file = fileNameCleaned, append = TRUE)
