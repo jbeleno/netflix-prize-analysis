@@ -26,6 +26,24 @@ movies <- read.csv2(fileNameCleaned,
 # omitting the NA values
 movies$year <- as.integer(movies$year)
 
+# We need to check the amount of NULL data that we have after looking for genres
+# in IMDB database
+NullMovies <- movies[movies$genre == "NULL",]
+NullMovies <- NullMovies[!is.na(NullMovies$id), ] # I don't know why but the last 
+                                                  # line included some NA values
+nrow(NullMovies) # 5.175
+nrow(movies)
+percentageNullData <- nrow(NullMovies)*100/nrow(movies) # 29.12%
+head(NullMovies$title, 15)
+
+# Movies with IMDB data
+NotNullMovies <- subset(movies, genre != "NULL") # This fixes the last problem
+                                                 # But the sum of NotNull and Null
+                                                 # was different from expected
+                                                 # due to some NA values
+# M <- subset(movies, genre == "NULL" | genre != "NULL")
+# M <- subset(movies, !(id %in% M$id))
+
 # Histogram of movies per year
 h <- qplot(movies$year, 
           geom="histogram", 
