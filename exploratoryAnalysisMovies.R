@@ -168,3 +168,32 @@ sumMovieRatings <- sapply( file.names, function(f){ countMovieRatings(f) })
 
 # Average rating per movie
 avgRatingMovie <- sumMovieRatings/nRowsMoviesFiles
+
+# Ordered average rating per movie
+ratingMovieDf <- data.frame(movie = NotNullMovies$title, 
+                            rating = avgRatingMovie, 
+                            votes = nRowsMoviesFiles)
+ratingMovieDf <- ratingMovieDf[order(ratingMovieDf$rating, decreasing=TRUE),]
+
+# Best movies graphic by rating
+g <- ggplot(data = head(ratingMovieDf, 10), aes(x = movie, y = rating))
+g <- g + geom_bar(fill="deepskyblue3", stat = "identity")
+g <- g + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+g <- g + ggtitle("Best movies according to the rating given by Netflix users")
+g <- g + labs(x="Movie Title",y="Average Rating")
+g <- g + geom_text(
+    aes(x = movie, y = rating + 0.15, label = format(rating, digits = 3)), 
+    size = 3, hjust=0.5)
+g
+
+
+# Worst movies graphic by rating
+g <- ggplot(data = tail(ratingMovieDf, 10), aes(x = movie, y = rating))
+g <- g + geom_bar(fill="deepskyblue3", stat = "identity")
+g <- g + theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+g <- g + ggtitle("Worst movies according to the rating given by Netflix users")
+g <- g + labs(x="Movie Title",y="Average Rating")
+g <- g + geom_text(
+    aes(x = movie, y = rating + 0.05, label = format(rating, digits = 3)), 
+    size = 3, hjust=0.5)
+g
