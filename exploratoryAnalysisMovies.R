@@ -137,3 +137,34 @@ g <- g + geom_text(
     aes(x = actors, y = movies + 1, label = movies), 
     size = 3, hjust=0.5)
 g
+
+
+
+# Movies rating files
+file.names<-paste0('data/training_set/mv_',sprintf('%07d',NotNullMovies$id),'.txt')
+
+# Number of lines per file, the minus 1 is because the first line is for
+# the movie id
+nRowsMoviesFiles <- sapply( file.names, function(f){length(count.fields(f)) - 1} )
+
+# Re-arrange the number of rows data to know the files with more and less lines
+nRowsMoviesFilesOrdered <- sort(nRowsMoviesFiles, decreasing=TRUE)
+head(nRowsMoviesFilesOrdered)
+tail(nRowsMoviesFilesOrdered)
+
+# Sum it up everything to know the real amount of data we are handling with
+sum(nRowsMoviesFilesOrdered) # 89.666.002 lines
+
+# A function to sum it up all the ratings values for each file
+countMovieRatings <- function(f){
+    content <- read.csv(f, skip = 1, header = FALSE, nrows = 232944,
+                        colClasses = c("integer", "integer", "character"),
+                        col.names = c("id", "rating", "date"))
+    
+    sum(content$rating)
+}
+
+sumMovieRatings <- sapply( file.names, function(f){ countMovieRatings(f) })
+
+# Average rating per movie
+avgRatingMovie <- sumMovieRatings/nRowsMoviesFiles
