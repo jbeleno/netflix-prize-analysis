@@ -40,7 +40,8 @@ head(NullMovies$title, 15)
 NotNullMovies <- subset(movies, genre != "NULL") # This fixes the last problem
                                                  # But the sum of NotNull and Null
                                                  # was different from expected
-                                                 # due to some NA values
+                                                 # due to some NA values 
+                                                 # 12.499 values = 70.33%
 # M <- subset(movies, genre == "NULL" | genre != "NULL")
 # M <- subset(movies, !(id %in% M$id))
 
@@ -197,3 +198,34 @@ g <- g + geom_text(
     aes(x = movie, y = rating + 0.05, label = format(rating, digits = 3)), 
     size = 3, hjust=0.5)
 g
+
+# This code is for saving data in a different way to easy exchange with 
+# relational databases
+moviesDataFile <- data.frame(id = movies$id, 
+                             year = movies$year,
+                             title = movies$title)
+write.table(moviesDataFile, file = "./data/movie_titles_reformated.txt",
+            sep = ";", row.names = F)
+
+
+# Separating genres in a different file for relational databases compatibility
+appendGenresInMovies <- function(x, output) {
+    idMovie <- x["id"]
+    genresString <- x["genre"] # I don't know why this doesn't accept $ notation
+    
+    for(genre in genres){
+        #print(genresString)
+        if(grepl(genre, genresString)){
+            write(paste0(idMovie, ";",  genre), file = output, append = TRUE)
+        }
+    }
+}
+
+apply(movies, 1, appendGenresInMovies, output = './data/genres.txt')
+
+
+
+# Worst and best genres
+
+# Getting the results of how many people where active at rating movies
+# (This is better to do with a relational database)
