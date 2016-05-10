@@ -224,6 +224,46 @@ appendGenresInMovies <- function(x, output) {
 apply(movies, 1, appendGenresInMovies, output = './data/genres.txt')
 
 
+# Moving the rating data to a local MySQL database
+library(RMySQL)
+
+# Defining the files to be used
+total.file.names<-paste0('data/training_set/mv_',sprintf('%07d',movies$id),'.txt')
+total.file.names.df <- data.frame(id_movie = movies$id, file_name = total.file.names)
+
+addingRatingsToSQL <- function(f){
+    # Create connection to the database
+    netflixDb <- dbConnect(MySQL(), user="root",
+                            host="127.0.0.1", db="netflix")
+    # Reading data in the file
+    content <- read.csv(f["file_name"], skip = 1, header = FALSE, nrows = 232944,
+                        colClasses = c("integer", "integer", "character"),
+                        col.names = c("id_user", "rating", "date"))
+    
+    for(x in seq(1:nrow(content))){
+        # Creating a insert query with this
+        # query <- paste("INSERT INTO ratings VALUES(", paste(content[1,], collapse = ", "), ")")
+        query <- paste("INSERT INTO ratings VALUES(",content[x, "id_user"],
+                       ",", f["id_movie"], ",", content[x, "rating"], 
+                       ", STR_TO_DATE(", paste0("'", trimws(content[x, "date"]), "'"), 
+                       ", '%Y-%m-%d'))")
+        
+        dbGetQuery(netflixDb, query)
+    }
+    
+    print(query)
+    
+    # Disconnect the database
+    dbDisconnect(netflixDb)
+}
+
+# Migrating ratings to a local MySQL database
+apply( total.file.names.df, 1, function(f){addingRatingsToSQL(f)} )
+
+# Create a new bunch of files with movies, rating per user
+
+# Boxplot-Histogram of rating data in movies
+
 
 # Worst and best genres
 
