@@ -1,0 +1,60 @@
+# Using the tutorial available in the official documentation for Neo4j
+# Link: http://neo4j.com/developer/guide-importing-data-and-etl/
+
+// Create users, I had to copy the files in a folder 'import' that
+// I created inside the Neo4j folder: 
+// 480.190 users
+
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:/users.csv" AS row
+CREATE (:User {idUser: row.user});
+
+
+// Create movies
+// 17.770 movies
+
+USING PERIODIC COMMIT
+LOAD CSV  WITH HEADERS FROM "file:/movies.txt" AS row FIELDTERMINATOR ';'
+CREATE (:Movie {idMovie: row.id, year: row.year, title: row.title});
+
+
+// Create indexes for an easy creation of edges in the graph
+CREATE INDEX ON :User(idUser);
+CREATE INDEX ON :Movie(idMovie);
+
+
+// Create edges
+
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:/edges_1.csv" AS row
+MATCH (user:User {idUser: row.id_user})
+MATCH (movie:Movie {idMovie: row.id_movie})
+MERGE (user)-[w:WATCHED]->(movie)
+ON CREATE SET w.rating = toInt(row.rating);
+
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:/edges_2.csv" AS row
+MATCH (user:User {idUser: row.id_user})
+MATCH (movie:Movie {idMovie: row.id_movie})
+MERGE (user)-[w:WATCHED]->(movie)
+ON CREATE SET w.rating = toInt(row.rating);
+
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:/edges_3.csv" AS row
+MATCH (user:User {idUser: row.id_user})
+MATCH (movie:Movie {idMovie: row.id_movie})
+MERGE (user)-[w:WATCHED]->(movie)
+ON CREATE SET w.rating = toInt(row.rating);
+
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:/edges_4.csv" AS row
+MATCH (user:User {idUser: row.id_user})
+MATCH (movie:Movie {idMovie: row.id_movie})
+MERGE (user)-[w:WATCHED]->(movie)
+ON CREATE SET w.rating = toInt(row.rating);
+
+
+// SELECT
+
+MATCH (u:User{idUser: 6})-[WATCHED]->(m:Movie) 
+RETURN m.title
