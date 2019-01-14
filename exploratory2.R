@@ -1,6 +1,9 @@
 # Load libraries
 library(ggplot2)
 
+# Some settings for portuguese language
+Sys.setlocale("LC_ALL", 'en_US.UTF-8')
+
 # File with # of ratings/user
 fileNameRatingsPerUser <- "./data/nratings.csv"
 
@@ -13,14 +16,15 @@ ratings <- read.csv(fileNameRatingsPerUser,
 h <- qplot(ratings$nratings, 
            geom="histogram", 
            binwidth = 10,  
-           main = "User-Review degree distribution", 
-           xlab = "Degree (reviews per user)",
-           ylab = "# of users",
+           main = "Distribuição de frequência dos graus dos usuários", 
+           xlab = "Graus (avaliações por usuário)",
+           ylab = "# de usuários",
            fill=I("blue"), 
            col=I("red"), 
            alpha=I(.2),
            xlim=c(0,1500))
-h <- h + theme(plot.title = element_text(lineheight=.8, face="bold", size = 16))
+h <- h + theme(plot.title = element_text(lineheight=.8, face="bold", size = 20),
+               axis.title = element_text(size=16))
 h
 
 ggsave(file="user-review-degree.png")
@@ -50,14 +54,15 @@ nRowsMoviesFiles <- sapply( file.names, function(f){length(count.fields(f)) - 1}
 h <- qplot(nRowsMoviesFiles, 
            geom="histogram", 
            binwidth = 100,  
-           main = "Movie-Review degree distribution", 
-           xlab = "Degree (reviews per movie)",
-           ylab = "# of movies",
+           main = "Distribuição de frequência dos graus dos filmes", 
+           xlab = "Graus (avaliações por filme)",
+           ylab = "# de filmes",
            fill=I("blue"), 
            col=I("red"), 
            alpha=I(.2),
            xlim=c(0,10000))
-h <- h + theme(plot.title = element_text(lineheight=.8, face="bold", size = 16))
+h <- h + theme(plot.title = element_text(lineheight=.8, face="bold", size = 20),
+               axis.title = element_text(size=16))
 h
 
 ggsave(file="movie-review-degree.png")
